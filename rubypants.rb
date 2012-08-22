@@ -2,7 +2,7 @@
 # = RubyPants -- SmartyPants ported to Ruby
 #
 # Ported by Christian Neukirchen <mailto:chneukirchen@gmail.com>
-#   Copyright (C) 2004 Christian Neukirchen
+#   Copyright (C) 2004, 2006 Christian Neukirchen
 #
 # Incooporates ideas, comments and documentation by Chad Miller
 #   Copyright (C) 2004 Chad Miller
@@ -172,7 +172,7 @@
 #
 # Chad Miller:: http://web.chad.org
 #
-# Christian Neukirchen:: http://kronavita.de/chris
+# Christian Neukirchen:: http://chneukirchen.org
 #
 
 
@@ -206,7 +206,7 @@ class RubyPants < String
   #
   def initialize(string, options=[2])
     super string
-    @options = [*options]
+    @options = options.respond_to?(:to_ary) ? options.to_ary : [options]
   end
 
   # Apply SmartyPants transformations.
@@ -421,7 +421,7 @@ class RubyPants < String
              '\1&#8216;')
     # Single closing quotes:
     str.gsub!(/(#{close_class})'/, '\1&#8217;')
-    str.gsub!(/'(\s|s\b|$)/, '&#8217;\1')
+    str.gsub!(/'(\s|s\b)/, '&#8217;\1')
     # Any remaining single quotes should be opening ones:
     str.gsub!(/'/, '&#8216;')
 
@@ -430,7 +430,7 @@ class RubyPants < String
              '\1&#8220;')
     # Double closing quotes:
     str.gsub!(/(#{close_class})"/, '\1&#8221;')
-    str.gsub!(/"(\s|s\b|$)/, '&#8221;\1')
+    str.gsub!(/"\s/, '&#8221;\1')
     # Any remaining quotes should be opening ones:
     str.gsub!(/"/, '&#8220;')
 
@@ -469,7 +469,7 @@ class RubyPants < String
   # Chad Miller in the Python port of SmartyPants.
   #
   def tokenize
-    tag_soup = /([^<]*)(<[^>]*>)/
+    tag_soup = /\G([^<]*)(<[^>]*>)/
 
     tokens = []
 
